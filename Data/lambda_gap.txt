@@ -1,0 +1,10 @@
+#Cellule	Eg (eV)	lambda gap (nm)
+c-Si	1.125	1100
+Ge	0.661	1880
+GaAs	1.431	867
+InP	1.351	918
+CdS	2.503	496
+GaSb	0.727	1710
+CdTe	1.54	806
+CIS 	1.0	1240
+a-Si	1.7	729

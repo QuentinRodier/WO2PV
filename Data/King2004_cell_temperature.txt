@@ -1,0 +1,7 @@
+Module-type	Mount	a	b	delta_T
+Glass/cell/glass	Open_rack	-3.47	-0.594	3
+Glass/cell/glass	Close_roof_mount	-2.98	-0.0471	1
+Glass/cell/polymer_sheet	Open_rack	-3.56	-0.075	3
+Glass/cell/polymer_sheet	Insulated_back	-2.81	-0.0455	0
+Polymer/thin-film/steel	Open_rack	-3.58	-0.113	3
+22XLinearConcentrator	Tracker	-3.23	-0.13	13

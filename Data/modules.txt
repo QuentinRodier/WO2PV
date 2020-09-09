@@ -1,0 +1,6 @@
+Module	Type	A	Ncells	Pmax_STC Vmpp_STC Impp_STC Voc_STC Isc_STC Ct_Pmax Ct_Voc Ct_Isc	 Tcell_STC NOCT
+FranceWatts	c-Si	1.64	60.0	250.	30.52	8.21	37.67	8.64	-0.48	-0.36	0.02	25.	45.
+Sharp	a-Si/c-Si	1.42	180.	128.0	45.4	2.82	59.8	3.45	-0.24	-0.3	0.07	25.	44.
+Panasonic	HIT	1.26	72.	240.0	43.7	5.51	52.4	5.85	-0.29	-0.30	0.032	25.	44.
+FirstSolar	CdTe	0.72	154.	82.5	48.3	1.71	60.8	1.94	-0.25	-0.27	0.04	25.	45.
+SolarFrontier	CIS	1.23	36.	150.	79.	1.9	110.	2.1	-0.31	-0.30	0.01	25.	47.
