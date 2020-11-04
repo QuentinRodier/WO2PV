@@ -9,6 +9,8 @@ import numpy as np
 import os
 import scipy.interpolate
 import scipy.integrate
+import sys
+sys.path.append("Tools")
 import tools
 import matplotlib.pyplot as plt
 
@@ -29,9 +31,9 @@ def pv_power(namelist, atm, panel, nt, debug = 0):
     # From broadband or narrowband inputs compute high spectral resolution spectra using ARTDECO reference spectra
     #=============================================================================================================
     
-    swdiff_hres = []       # Diffuse irradiance high spectral resolution
-    swdir_hres = []        # Direct irradiance high spectral resolution
-    swref_hres = []        # Reflected irradiance high spectral resolution
+#    swdiff_hres = []       # Diffuse irradiance high spectral resolution
+#    swdir_hres = []        # Direct irradiance high spectral resolution
+#    swref_hres = []        # Reflected irradiance high spectral resolution
           
     wvl_artdeco = tools.wvl_artdeco()  # ARTDECO wavelengths of reference spectra
     
@@ -54,26 +56,16 @@ def pv_power(namelist, atm, panel, nt, debug = 0):
         plt.plot(wvl_artdeco, albdir_hres[0,:]) 
         plt.show()
     
-    for i in range(nt): 
-        # spectralisationis performed iteratively for each time step, this takes time   
-        if nswband == 1:
-            swdir_hres0 = tools.hres(atm.swdir[i], bands = namelist.swbands,sza = atm.sza[i],method = 'single-band', source = "direct")
-            swdir_hres+= [swdir_hres0]
-            swdiff_hres0 = tools.hres(atm.swdiff[i], bands = namelist.swbands,sza = atm.sza[i],method = 'single-band', source = "diffuse")
-            swdiff_hres+= [swdiff_hres0]
-            swref_hres+= [albdiff_hres[i,:]*swdiff_hres0 + albdir_hres[i,:]*swdir_hres0]
-                    
-        elif nswband > 1:
-            swdir_hres0 = tools.hres(atm.swdir[i,:], bands = namelist.swbands, sza = atm.sza[i],method = 'multi-band', source = "direct")
-            swdir_hres+= [swdir_hres0]
-            swdiff_hres0 = tools.hres(atm.swdiff[i,:], bands = namelist.swbands, sza = atm.sza[i],method = 'multi-band', source = "diffuse")
-            swdiff_hres+= [swdiff_hres0]
-            swref_hres+= [albdiff_hres[i,:]*swdiff_hres0 + albdir_hres[i,:]*swdir_hres0]
+    if nswband == 1:
+        swdir_hres = tools.hres(atm.swdir, bands = namelist.swbands,sza = atm.sza,method = 'single-band', source = "direct")
+        swdiff_hres = tools.hres(atm.swdiff, bands = namelist.swbands,sza = atm.sza,method = 'single-band', source = "diffuse")
+        swref_hres = albdiff_hres*swdiff_hres + albdir_hres*swdir_hres
+                
+    elif nswband > 1:
+        swdir_hres = tools.hres(atm.swdir, bands = namelist.swbands, sza = atm.sza,method = 'multi-band', source = "direct")
+        swdiff_hres = tools.hres(atm.swdiff, bands = namelist.swbands, sza = atm.sza,method = 'multi-band', source = "diffuse")
+        swref_hres= albdiff_hres*swdiff_hres + albdir_hres*swdir_hres  
   
-    swdir_hres = np.array(swdir_hres)
-    swdiff_hres = np.array(swdiff_hres)
-    swref_hres = np.array(swref_hres)
-    
     # Compute broadband incident radiation
     swdir_bb = np.sum(atm.swdir,axis=1)
     swdiff_bb = np.sum(atm.swdiff,axis=1)
@@ -103,7 +95,7 @@ def pv_power(namelist, atm, panel, nt, debug = 0):
     sw_poa_bb = scipy.integrate.simps(sw_poa_hres, wvl_artdeco)
     
 #    plt.figure(1)
-#    plt.plot(sw_poa_hres[200,:])
+#    plt.plot(sw_poa_hres[5,:])
 #    plt.show()
    
 #    swdir_poa_bb = scipy.integrate.simps(swdir_poa_hres, wvl_artdeco)
