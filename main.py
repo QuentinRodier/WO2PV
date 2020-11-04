@@ -64,11 +64,11 @@ def get_pv(forcing, output, n1 = 0, n2 = 10000, option = "timeseries"):
 
 if __name__ == "__main__":
     # The code below is used if directly calling this main.py file
-    forcing = "SIRTA_June" # atlas_AROME_subset, SIRTA_June, MNH etc.
-    output = "SIRTA_June"
-    option = "timeseries" # "timeseries", "atlas", controls how the data are splitted up (along time or space) for optimized computations
+    forcing = "atlas_AROME_subset" # atlas_AROME_subset, SIRTA_June, MNH etc.
+    output = "atlas_AROME_subset"
+    option = "atlas" # "timeseries", "atlas", controls how the data are splitted up (along time or space) for optimized computations
     n1 = 0           # only apply on subset along time (from n1 to n2 time steps)
-    n2 = 50000
+    n2 = 1000
     data = sys.argv  # to read arguments if called via command-line
     
     # used if command-line call
@@ -115,12 +115,15 @@ if __name__ == "__main__":
     else:    
         plt.figure(2,figsize=(18,10))
         plt.plot(dates, power_simul[0,:],"bo", label = "Simulation")
+        plt.xlabel(r"Time",size=24)
+        plt.ylabel(r"PV production (W m$^{-2}$)",size=24)
     
-    if "SIRTA" in forcing:
-        power_meas = np.loadtxt("Tests/%s_power_meas.dat"%forcing)
-        plt.plot(dates, power_meas[n1:n2],"r", label = "Measurement")
+        if "SIRTA" in forcing:
+            power_meas = np.loadtxt("Tests/%s_power_meas.dat"%forcing)
+            plt.plot(dates, power_meas[n1:n2],"r", label = "Measurement")
         
     plt.legend(loc=0)
+    plt.savefig("Figures/%s.jpg"%forcing,format = "jpg", dpi=200)
     plt.show()    
 
 

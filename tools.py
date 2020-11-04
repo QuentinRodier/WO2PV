@@ -60,7 +60,7 @@ def get_sun(lat,lon,date):
 #==============================================================================
 #=================  ATMOSPHERE EXTRACTION FROM NETCDF  ========================
 #==============================================================================
-def get_atm_from_ncfile(forcing, albedo, n1 = 0, n2 = -1):  
+def get_atm_from_ncfile(forcing, albedo, n1 = 0, n2 = -1):
     data =  nc.Dataset("Forcings/%s.nc"%forcing, "r") 
     lat = data.variables["lat"][:]
     lon = data.variables["lon"][:]
@@ -177,41 +177,38 @@ def hres(sw_in, bands = [0,4000], sza=0., method='single-band', source = "direct
         
     elif source == "diffuse":
         index = 1
-        
-    if (sza<artdeco_sza[0]):
-        sw = artdeco_spec[0,:,index]
-        
-    elif (sza>=artdeco_sza[-1]):
-        sw = artdeco_spec[-1,:,index]
-        
-    else:
-        # interpolation on spectra
-        indx_temp = np.searchsorted(artdeco_sza,sza)
-        f1 = artdeco_spec[indx_temp,:,index]  # interpolation between successive spectra
-        f2 = artdeco_spec[indx_temp+1,:,index]
-        sw = (sza - artdeco_sza[indx_temp])/(artdeco_sza[indx_temp+1] - artdeco_sza[indx_temp])*(f2-f1)+f1      
+  
+    sw = np.zeros((np.shape(sw_in)[0], len(artdeco_wls))) 
+     
+    inf_sza = np.where(sza<=artdeco_sza[0])[0]
+    sw[inf_sza,:] = artdeco_spec[0,:,index]
+    
+    sup_sza = np.where(sza>=artdeco_sza[-1])[0]
+    sw[sup_sza,:] = artdeco_spec[-1,:,index]
+           
+    # interpolation on spectra
+    in_sza = np.where((sza<artdeco_sza[-1]) & (sza>artdeco_sza[0]))[0]
+    indx_temp = np.searchsorted(artdeco_sza,sza)
+    f1 = artdeco_spec[indx_temp,:,index]  # interpolation between successive spectra
+    f2 = artdeco_spec[indx_temp+1,:,index]
+    sw[in_sza,:] = (sza[in_sza,None] - artdeco_sza[indx_temp][in_sza,None])/(artdeco_sza[indx_temp+1][in_sza,None] - artdeco_sza[indx_temp][in_sza,None])*(f2[in_sza,:]-f1[in_sza,:])+f1[in_sza,:]      
 
     # Converting from low to high resolution
-    sw_hres = np.zeros(len(artdeco_wls)) 
+    sw_hres = np.zeros((np.shape(sw_in)[0], len(artdeco_wls))) 
     
     for i in range(len(bands)-1):
         i1, i2 = np.searchsorted(artdeco_wls, (bands[i],bands[i+1]))
-#        print(bands[i],bands[i+1])
-#        print(i1,i2)
-        
-        if i1 == i2:
-            sw_band = 0
-        else:    
-            sw_band = scipy.integrate.simps(sw[i1:i2], artdeco_wls[i1:i2])  # energy in the band
+        sw_band = np.zeros(np.shape(sw_in)[0])
+
+        if i1 != i2:         
+            sw_band[:] = scipy.integrate.simps(sw[:,i1:i2], artdeco_wls[i1:i2])  # energy in the band
     
-#        print("sw_in")
-#        print(sw_in)
-        if sw_band !=0:
-            if method == 'multi-band':
-                sw_hres[i1:i2] = sw_in[i]/sw_band*sw[i1:i2]
-                
-            if method == 'single-band': # one single band
-                sw_hres[i1:i2] = sw_in/sw_band*sw[i1:i2]
+        ze = np.where(sw_band != 0)[0]
+        if method == 'multi-band':
+            sw_hres[ze,i1:i2] = sw_in[ze,i,None]/sw_band[ze,None]*sw[ze,i1:i2]
+            
+        if method == 'single-band': # one single band
+            sw_hres[ze,i1:i2] = sw_in[ze]/sw_band*sw[ze,i1:i2]
             
     return sw_hres   
 
