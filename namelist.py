@@ -25,7 +25,7 @@ def bands_ecrad(datadir):
 class Namelist():  
     """Namelist object only has attributes that can be accessed from other modules"""
     def __init__(self):
-        self.datadir = '/home/liboisq/Documents/Stagiaires/Nicole_Lindsay/PVCode_clean/Tools/data'
+        self.datadir = 'Data'
 #        self.swbands = [200., 4000.] # wavelength limits of the atmospheric swdir and swdiff inputs (nm) ; self.swbands = bands_ecrad(self.datadir) if usng ecrad bands
         self.swbands = bands_ecrad(self.datadir)
         print(self.swbands)
