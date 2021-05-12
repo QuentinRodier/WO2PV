@@ -55,16 +55,10 @@ def pv_power(namelist, atm, panel, nt, debug = 0):
         plt.step(namelist.swbands[:-1], atm.albdir[0,:])    
         plt.plot(wvl_artdeco, albdir_hres[0,:]) 
         plt.show()
-    
-    if nswband == 1:
-        swdir_hres = tools.hres(atm.swdir, bands = namelist.swbands,sza = atm.sza,method = 'single-band', source = "direct")
-        swdiff_hres = tools.hres(atm.swdiff, bands = namelist.swbands,sza = atm.sza,method = 'single-band', source = "diffuse")
-        swref_hres = albdiff_hres*swdiff_hres + albdir_hres*swdir_hres
-                
-    elif nswband > 1:
-        swdir_hres = tools.hres(atm.swdir, bands = namelist.swbands, sza = atm.sza,method = 'multi-band', source = "direct")
-        swdiff_hres = tools.hres(atm.swdiff, bands = namelist.swbands, sza = atm.sza,method = 'multi-band', source = "diffuse")
-        swref_hres= albdiff_hres*swdiff_hres + albdir_hres*swdir_hres  
+
+    swdir_hres = tools.hres(atm.swdir, bands = namelist.swbands, sza = atm.sza, source = "direct")
+    swdiff_hres = tools.hres(atm.swdiff, bands = namelist.swbands, sza = atm.sza, source = "diffuse")
+    swref_hres= albdiff_hres*swdiff_hres + albdir_hres*swdir_hres  
   
     # Compute broadband incident radiation
     swdir_bb = np.sum(atm.swdir,axis=1)
