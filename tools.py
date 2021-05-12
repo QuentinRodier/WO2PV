@@ -166,7 +166,7 @@ def compute_ASTM_spectrum():
     
 
 # ------ Increasing spectral resolution ------------------  
-def hres(sw_in, bands = [0,4000], sza=0., method='single-band', source = "direct"):   
+def hres(sw_in, bands = [0,4000], sza=0., source = "direct"):   
     """Take a low resolution spectrum over a few bands and
     return a spectrum with resolution of ASTM or ARTDECO"""
     
@@ -204,11 +204,10 @@ def hres(sw_in, bands = [0,4000], sza=0., method='single-band', source = "direct
             sw_band[:] = scipy.integrate.simps(sw[:,i1:i2], artdeco_wls[i1:i2])  # energy in the band
     
         ze = np.where(sw_band != 0)[0]
-        if method == 'multi-band':
-            sw_hres[ze,i1:i2] = sw_in[ze,i,None]/sw_band[ze,None]*sw[ze,i1:i2]
+
+        sw_hres[ze,i1:i2] = sw_in[ze,i,None]/sw_band[ze,None]*sw[ze,i1:i2]
             
-        if method == 'single-band': # one single band
-            sw_hres[ze,i1:i2] = sw_in[ze]/sw_band*sw[ze,i1:i2]
+
             
     return sw_hres   
 
