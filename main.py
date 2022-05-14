@@ -15,7 +15,7 @@ from panel import Panel
 from pv_interface import pv_interface_timeseries, pv_interface_atlas # handles all inputs and calls pv_production
 import time
 import cartopy.crs as ccrs
-from matplotlib.mlab import griddata
+from scipy.interpolate import griddata
 
 def get_gridded_data(lon,lat,var):
     """Interpolation of spatial data on a regular grid"""
@@ -24,7 +24,7 @@ def get_gridded_data(lon,lat,var):
     yi = np.linspace(42,45, numrows)
     xi, yi = np.meshgrid(xi, yi)
     
-    zi = griddata(lon,lat,var, xi, yi,interp='linear')
+    zi = griddata((lon,lat),var, (xi, yi), method='cubic')
     
     return xi,yi,zi
 
